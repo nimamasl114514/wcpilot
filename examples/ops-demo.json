@@ -1,0 +1,22 @@
+[
+  {"op": "winctl", "state": "normal", "comment": "确保目标窗口不是最大化/最小化"},
+  {"op": "wait_stable", "timeout_ms": 3000, "interval_ms": 150, "stable_ms": 300,
+   "comment": "等窗口渲染稳定，别用固定 sleep"},
+
+  {"op": "click", "x": 300, "y": 200, "comment": "点进编辑区（窗口内相对坐标）"},
+  {"op": "key", "key": "ctrl+a"},
+  {"op": "type", "text": "wcpilot batch demo 123", "comment": "非 ASCII 自动走剪贴板"},
+
+  {"op": "wait_stable", "timeout_ms": 3000, "stable_ms": 250},
+  {"op": "wait_text", "text": "batch demo", "timeout_ms": 20000,
+   "comment": "OCR 回找，证明真的写进去了"},
+
+  {"op": "get_pixel", "x": 10, "y": 10},
+  {"op": "wheel", "delta": -120, "x": 200, "y": 200},
+
+  {"op": "winctl", "state": "top"},
+  {"op": "winctl", "state": "notop"},
+
+  {"op": "wait_stable", "timeout_ms": 3000, "stable_ms": 250,
+   "comment": "收尾：确认界面已经稳定"}
+]

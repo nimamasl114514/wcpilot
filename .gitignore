@@ -1,0 +1,19 @@
+# 编译器/工具链无关；只忽略构建产物与本地临时文件
+*.exe
+*.exe.bak-*
+*.test
+wcpilot_*.json.tmp
+_local_archive/
+wcpilot_evidence/
+*.png
+!docs/*.png
+
+# Python
+__pycache__/
+*.pyc
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store
