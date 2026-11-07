@@ -1,5 +1,9 @@
 # wcpilot
 
+[![ci](https://github.com/nimamasl114514/wcpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/nimamasl114514/wcpilot/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/nimamasl114514/wcpilot)](https://github.com/nimamasl114514/wcpilot/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **让 AI 真正能操作你的 Windows 电脑** —— 截图、点击、输入、找字/找色/找图、等画面稳定，
 全部收敛成「一次调用 → 一行 JSON」。窗口级防误触，单文件 exe，零第三方 Go 依赖。
 
@@ -11,7 +15,7 @@ $ wcpilot find_text --text "你好" --click
 {"count":1,"hits":[{"x":145,"y":39,"text":"你好，世界","screen_x":784,"screen_y":224,...}],"ocr":{"mode":"daemon","ms":633}}
 ```
 
-- Go 1.21+ · Windows 10/11 · 单 exe（约 5MB）· MIT
+- Go 1.21+ · Windows 10/11 · 单 exe（约 4.2MB）· MIT
 - 原生 syscall 调 `user32/gdi32/dwmapi`：PrintWindow 抓被遮挡窗口、SendInput 注入输入、
   PostMessage 后台注入（不抢焦点、不动真实鼠标）
 - OCR 走 rapidocr（可选依赖），常驻守护进程复用模型，**每次调用省掉一次冷启动**
