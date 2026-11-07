@@ -335,7 +335,9 @@ func cmdFindColor(hwndFlag uint, titleFlag, regionFlag, colorStr string, tol, ma
 	trace("capture=%dms find=%dms threads=%d hits=%d",
 		tCap.Milliseconds(), (time.Since(t0) - tCap).Milliseconds(), threads(), len(hits))
 	if click && len(hits) > 0 {
-		clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false)
+		if err := clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false); err != nil {
+			die("%v", err)
+		}
 	}
 	rec := map[string]interface{}{"ok": true, "count": len(hits), "hits": hits,
 		"windowed": hasTarget, "clicked": click && len(hits) > 0}
@@ -367,7 +369,9 @@ func cmdFindImage(hwndFlag uint, titleFlag, regionFlag, tplPath string, tol, max
 		tCap.Milliseconds(), (time.Since(t0) - tCap).Milliseconds(),
 		tpl.Bounds().Dx(), tpl.Bounds().Dy(), threads(), len(hits))
 	if click && len(hits) > 0 {
-		clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false)
+		if err := clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false); err != nil {
+			die("%v", err)
+		}
 	}
 	rec := map[string]interface{}{"ok": true, "count": len(hits), "hits": hits,
 		"windowed": hasTarget, "clicked": click && len(hits) > 0}
@@ -379,19 +383,23 @@ func cmdFindImage(hwndFlag uint, titleFlag, regionFlag, tplPath string, tol, max
 
 // clickHit 点击命中点：非 bg 一律点屏幕绝对坐标 (ox+X, oy+Y)；
 // bg 走 PostMessage 需窗口内相对坐标，用 (ox-rc.Left+X) 换算——region 裁剪后的命中也能点对。
-func clickHit(h Hit, ox, oy int, rc RECT, windowed, bg bool, btn string, dbl bool) {
+// 返回 error 而不是直接退出进程：batch 里单个命中点失效不该杀掉整条编排。
+func clickHit(h Hit, ox, oy int, rc RECT, windowed, bg bool, btn string, dbl bool) error {
 	if windowed {
 		hwnd := resolveSafeHwnd(rc)
 		if bg {
 			if hwnd == 0 {
-				die("bg 点击需要有效目标窗口（target 锁定或 --hwnd）")
+				return fmt.Errorf("bg 点击需要有效目标窗口（target 锁定或 --hwnd）")
 			}
 			postClick(hwnd, h.X+(ox-int(rc.Left)), h.Y+(oy-int(rc.Top)), btn, dbl)
-			return
+			return nil
 		}
-		activateWindow(hwnd)
+		if hwnd != 0 {
+			activateWindow(hwnd)
+		}
 	}
 	clickAt(ox+h.X, oy+h.Y, btn, dbl)
+	return nil
 }
 
 // resolveSafeHwnd 供 clickHit 在后台模式找回 hwnd（经 target 状态）

@@ -300,7 +300,9 @@ func execJob(j *BatchJob, exeDir string, pressed *[]uint16) (map[string]interfac
 		if len(hits) == 0 {
 			return nil, fmt.Errorf("OCR 未命中 %q", j.Text)
 		}
-		clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double)
+		if err := clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double); err != nil {
+			return nil, err
+		}
 		return map[string]interface{}{"hit": hits[0]}, nil
 
 	case "click_color":
@@ -311,7 +313,9 @@ func execJob(j *BatchJob, exeDir string, pressed *[]uint16) (map[string]interfac
 		if len(hits) == 0 {
 			return nil, fmt.Errorf("未找到颜色 %q", j.Color)
 		}
-		clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double)
+		if err := clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double); err != nil {
+			return nil, err
+		}
 		return map[string]interface{}{"hit": hits[0]}, nil
 
 	case "click_image":
@@ -322,7 +326,9 @@ func execJob(j *BatchJob, exeDir string, pressed *[]uint16) (map[string]interfac
 		if len(hits) == 0 {
 			return nil, fmt.Errorf("未找到模板图 %q", j.Tpl)
 		}
-		clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double)
+		if err := clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double); err != nil {
+			return nil, err
+		}
 		return map[string]interface{}{"hit": hits[0]}, nil
 
 	case "winctl":
@@ -544,7 +550,9 @@ func waitGeneric(j *BatchJob, exeDir string) (map[string]interface{}, error) {
 	}
 	info["hits"] = hits
 	if j.Click && len(hits) > 0 {
-		clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double)
+		if err := clickHit(hits[0], ox, oy, rc, windowed, j.Bg, defaultStr(j.Btn, "left"), j.Double); err != nil {
+			return info, err
+		}
 		info["clicked"] = true
 	}
 	return info, nil

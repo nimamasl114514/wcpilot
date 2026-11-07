@@ -562,7 +562,9 @@ func cmdFindText(exeDir string, hwndFlag uint, titleFlag, regionFlag, query stri
 		hits = []Hit{}
 	}
 	if click && len(hits) > 0 {
-		clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false)
+		if err := clickHit(hits[0], ox, oy, rc, hasTarget, bg, "left", false); err != nil {
+			die("%v", err)
+		}
 	}
 	rec := map[string]interface{}{"ok": true, "count": len(hits), "hits": hits,
 		"query": query, "windowed": hasTarget, "clicked": click && len(hits) > 0,
